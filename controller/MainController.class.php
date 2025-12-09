@@ -28,8 +28,10 @@ class MainController {
                 $controlProduct->processRequest();
                 break;
             default:
-                
+                $controlCategory=new CategoryController();
+                $controlCategory->processRequest();
                 break;
+    
         }
 
     }

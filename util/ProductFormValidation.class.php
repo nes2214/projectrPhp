@@ -1,54 +1,66 @@
 <?php
-class ProductFormValidation{
-    const ADD_FIELDS = array('id', 'name', 'price', 'description', 'category');
-    
+require_once "model/Product.class.php";
+require_once "util/ProductMessage.class.php";
+
+class ProductFormValidation {
+
+    const ADD_FIELDS = array('id','name','price','description','category');
+
+    const NUMERIC = "/^[0-9]+$/";
+    const ALPHANUMERIC = "/^[a-zA-Z0-9\s]+$/";
+
     public static function checkData($fields) {
-        $id=NULL;
-        $name=NULL;
-        
+        $id = NULL;
+        $name = NULL;
+        $price = NULL;
+        $description = NULL;
+        $category = NULL;
+
+        if (!isset($_SESSION)) session_start();
+        if (!isset($_SESSION['error'])) $_SESSION['error'] = [];
+
         foreach ($fields as $field) {
             switch ($field) {
                 case 'id':
-                    // filter_var retorna los datos filtrados o FALSE si el filtro falla
-                    $id=trim(filter_input(INPUT_POST, 'id'));
-                    $idValid=!preg_match(self::NUMERIC, $id);
+                    $id = trim(filter_input(INPUT_POST, 'id'));
                     if (empty($id)) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['empty_id']);
-                    }
-                    else if ($idValid == FALSE) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['invalid_id']);
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['empty_id'];
+                    } else if (!preg_match(self::NUMERIC, $id)) {
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['invalid_id'];
                     }
                     break;
+
                 case 'name':
-                    $name=trim(filter_input(INPUT_POST, 'name'));
-                    $nameValid=!preg_match(self::ALPHABETIC, $name);
+                    $name = trim(filter_input(INPUT_POST, 'name'));
                     if (empty($name)) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['empty_name']);
-                    }
-                    else if ($nameValid == FALSE) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['invalid_name']);
-                    }
-                    break;
-                case 'xx':
-                    // filter_var retorna los datos filtrados o FALSE si el filtro falla
-                    $id=trim(filter_input(INPUT_POST, 'id'));
-                    $idValid=filter_var($id, FILTER_SANITIZE_NUMBER_INT);
-                    if ($idValid == FALSE) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['invalid_id']);
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['empty_name'];
+                    } else if (!preg_match(self::ALPHANUMERIC, $name)) {
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['invalid_name'];
                     }
                     break;
-                case 'xx':
-                    $name=trim(filter_input(INPUT_POST, 'name'));
-                    $nameValid=filter_var($name, FILTER_SANITIZE_STRING);
-                    if ($nameValid == FALSE) {
-                        array_push($_SESSION['error'], CategoryMessage::ERR_FORM['invalid_name']);
+
+                case 'price':
+                    $price = trim(filter_input(INPUT_POST, 'price'));
+                    if (empty($price)) {
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['empty_price'];
+                    } else if (!is_numeric($price) || $price < 0) {
+                        $_SESSION['error'][] = ProductMessage::ERR_FORM['invalid_price'];
+                    }
+                    break;
+
+                case 'description':
+                    $description = trim(filter_input(INPUT_POST, 'description'));
+                    break;
+
+                case 'category':
+                    $category = trim(filter_input(INPUT_POST, 'category'));
+                    if (empty($category)) {
+                        $_SESSION['error'][] = "Category must be selected";
                     }
                     break;
             }
         }
-        
-        $category=new Category($id, $name);
-        
-        return $category;
+
+        return new Product($id, $name, $price, $description, $category);
     }
 }

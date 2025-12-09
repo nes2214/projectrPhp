@@ -1,24 +1,22 @@
-<div id="info">
-    <?php
-        if (is_array($_SESSION['info']) == TRUE) {
-            foreach ($_SESSION['info'] as $info) {
-                echo "<p>$info</p>";
-            }
-        }
-        else {
-            echo "<p>{$_SESSION['info']}</p>";          
-        }
-    ?>
-</div>
-<div id="error">
-    <?php
-        if (is_array($_SESSION['error']) == TRUE) {
-            foreach ($_SESSION['error'] as $error) {
-                echo "<p>$error</p>";
-            }
-        }
-        else {
-            echo "<p>{$_SESSION['error']}</p>";            
-        }
-    ?>
-</div>
+<?php
+if (!empty($_SESSION['error'])) {
+    echo '<div class="error">';
+    foreach ($_SESSION['error'] as $err) {
+        echo "<p>$err</p>";
+    }
+    echo '</div>';
+
+    // Opcional: limpiar errores después de mostrarlos
+    $_SESSION['error'] = array();
+}
+
+if (!empty($_SESSION['info'])) {
+    echo '<div class="info">';
+    foreach ($_SESSION['info'] as $msg) {
+        echo "<p>$msg</p>";
+    }
+    echo '</div>';
+
+    $_SESSION['info'] = array();
+}
+?>

@@ -3,7 +3,8 @@ require_once "controller/ControllerInterface.php";
 require_once "view/ProductView.class.php";
 require_once "model/ProductModel.class.php";
 require_once "model/Product.class.php";
-
+require_once "util/ProductMessage.class.php";
+require_once "util/ProductFormValidation.class.php";
 
 class ProductController implements ControllerInterface {
 
@@ -44,7 +45,28 @@ class ProductController implements ControllerInterface {
 
     // Métodos obligatorios de ControllerInterface
     public function add() {
-        // Lógica para agregar producto
+        $productValid = ProductFormValidation::checkData(ProductFormValidation::ADD_FIELDS);
+
+        if (empty($_SESSION['error'])) {
+            $product = $this->model->searchById($productValid->getId());
+
+            if (is_null($product)) {
+                $result = $this->model->add($productValid);
+
+                if ($result === TRUE) {
+                    $_SESSION['info'][] = ProductMessage::INF_FORM['insert'];
+                    $productValid = null;
+                } else {
+                    $_SESSION['error'][] = ProductMessage::ERR_DAO['insert'];
+                }
+            } else {
+                $_SESSION['error'][] = ProductMessage::ERR_FORM['exists_id'];
+            }
+        }
+
+        // Volver a cargar el formulario con datos y categorías
+        $categories = $this->model->listCategories();
+        $this->view->display("view/form/ProductFormAdd.php", $productValid, $categories);
     }
 
     public function modify() {
@@ -56,7 +78,17 @@ class ProductController implements ControllerInterface {
     }
 
     public function listAll() {
-        // Lógica para listar todos los productos
+    // Obtener todos los productos
+    $products = $this->model->listAll();
+
+    if (!empty($products)) { // si hay productos
+        $_SESSION['info'][] = ProductMessage::INF_FORM['found'];
+    } else {
+        $_SESSION['error'][] = ProductMessage::ERR_FORM['not_found'];
+    }
+
+    // Mostrar la vista con los productos
+    $this->view->display("view/form/ProductList.php", $products);
     }
 
     public function searchById() {

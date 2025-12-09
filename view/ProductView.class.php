@@ -1,6 +1,8 @@
 <?php
 class ProductView {
-    
+    public function __construct() {
+
+    }
     public function display($template = NULL, $content = NULL) {
         // Menú principal
         include("view/menu/MainMenu.html");
