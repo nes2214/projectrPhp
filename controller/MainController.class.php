@@ -1,5 +1,6 @@
 <?php
 require_once "controller/CategoryController.class.php";
+require_once "controller/ProductController.class.php";
 
 class MainController {
 
@@ -17,9 +18,17 @@ class MainController {
         switch ($request) {
             // categorías
             //case "category":
-            default:
+            case "category":
                 $controlCategory=new CategoryController();
                 $controlCategory->processRequest();
+                break;
+            case "product":
+                // productos
+                $controlProduct=new ProductController();
+                $controlProduct->processRequest();
+                break;
+            default:
+                
                 break;
         }
 
