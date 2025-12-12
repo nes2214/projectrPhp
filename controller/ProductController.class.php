@@ -17,7 +17,14 @@ class ProductController implements ControllerInterface {
     }
 
     public function processRequest() {
-        $request = filter_input(INPUT_GET, 'option') ?: null;
+        if (filter_has_var(INPUT_POST, 'action')) {
+            $request=filter_has_var(INPUT_POST, 'action')?filter_input(INPUT_POST, 'action'):NULL;
+        }
+        // recupera la opción de un menú
+        else {
+            $request=filter_has_var(INPUT_GET, 'option')?filter_input(INPUT_GET, 'option'):NULL;
+        }
+
 
         switch ($request) {
             case "form_add":
@@ -45,29 +52,31 @@ class ProductController implements ControllerInterface {
 
     // Métodos obligatorios de ControllerInterface
     public function add() {
-        $productValid = ProductFormValidation::checkData(ProductFormValidation::ADD_FIELDS);
+    $productValid = ProductFormValidation::checkData(ProductFormValidation::ADD_FIELDS);
 
-        if (empty($_SESSION['error'])) {
-            $product = $this->model->searchById($productValid->getId());
+    if (empty($_SESSION['error'])) {
 
-            if (is_null($product)) {
-                $result = $this->model->add($productValid);
+        $product = $this->model->searchById($productValid->getId());
 
-                if ($result === TRUE) {
-                    $_SESSION['info'][] = ProductMessage::INF_FORM['insert'];
-                    $productValid = null;
-                } else {
-                    $_SESSION['error'][] = ProductMessage::ERR_DAO['insert'];
-                }
+        if (is_null($product)) {
+            $result = $this->model->add($productValid);
+
+            if ($result === TRUE) {
+                $_SESSION['info'][] = ProductMessage::INF_FORM['insert'];
+                $productValid = null;
             } else {
-                $_SESSION['error'][] = ProductMessage::ERR_FORM['exists_id'];
+                $_SESSION['error'][] = ProductMessage::ERR_DAO['insert'];
             }
+        } else {
+            $_SESSION['error'][] = ProductMessage::ERR_FORM['exists_id'];
         }
-
-        // Volver a cargar el formulario con datos y categorías
-        $categories = $this->model->listCategories();
-        $this->view->display("view/form/ProductFormAdd.php", $productValid, $categories);
     }
+
+    // <--- aquí estaba el error
+    $categories = CategoryFileDAO::getInstance()->listAll();
+
+    $this->view->display("view/form/ProductFormAdd.php", $productValid, $categories);
+}
 
     public function modify() {
         // Lógica para modificar producto

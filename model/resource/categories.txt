@@ -1,3 +1,2 @@
-2;Salut
-
+2;Cosmetic
 4;novaCateg

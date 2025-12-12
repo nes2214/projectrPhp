@@ -137,7 +137,7 @@ public function delete($id): bool {
                 $line=trim(fgets($this->connect->getHandle()));
                 if ($line!="") {
                     $fields=explode(";", $line);
-                    $product=new product($fields[0], $fields[1]);
+                    $product=new product($fields[0], $fields[1] , "$fields[2] €", $fields[3], $fields[4]);
                     array_push($result, $product);
                 }
             }
