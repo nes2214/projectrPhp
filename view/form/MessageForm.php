@@ -4,7 +4,7 @@ if (!empty($_SESSION['error'])) {
         $_SESSION['error'] = [$_SESSION['error']]; // convertir string en array
     }
 
-    echo '<div class="error">';
+    echo '<div class="error" id="error">';
     foreach ($_SESSION['error'] as $err) {
         echo "<p>$err</p>";
     }
@@ -18,7 +18,7 @@ if (!empty($_SESSION['info'])) {
         $_SESSION['info'] = [$_SESSION['info']];
     }
 
-    echo '<div class="info">';
+    echo '<div class="info" id="infogi">';
     foreach ($_SESSION['info'] as $msg) {
         echo "<p>$msg</p>";
     }
