@@ -3,7 +3,7 @@
 require_once "model/ModelInterface.class.php";
 require_once "model/persist/ConnectDb.class.php";
 
-class ProductDbDAO implements ModelInterface {
+class MascotaDbDAO implements ModelInterface {
 
     private static $instance = NULL;
     private $connect;
@@ -12,14 +12,15 @@ class ProductDbDAO implements ModelInterface {
         $this->connect = (new ConnectDb())->getConnection();
     }
 
-    public static function getInstance(): ProductDbDAO {
+    public static function getInstance(): MascotaDbDAO {
         if (self::$instance == NULL) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function add($product): bool {
+
+    public function add($mascota): bool {
         if ($this->connect == NULL) {
             $_SESSION['error'] = "Unable to connect to database";
             return FALSE;
@@ -27,19 +28,16 @@ class ProductDbDAO implements ModelInterface {
 
         try {
             $sql = <<<SQL
-                INSERT INTO product (id, name, price, description, category)
-                VALUES (:id, :name, :price, :description, :category);
+                INSERT INTO mascota (id, nom, propietari_id)
+                VALUES (:id, :nom, :propietari_id);
 SQL;
 
             $stmt = $this->connect->prepare($sql);
-            $stmt->bindValue(":id", $product->getId(), PDO::PARAM_INT);
-            $stmt->bindValue(":name", $product->getName(), PDO::PARAM_STR);
-            $stmt->bindValue(":price", $product->getPrice());
-            $stmt->bindValue(":description", $product->getDescription(), PDO::PARAM_STR);
-            $stmt->bindValue(":category", $product->getCategory(), PDO::PARAM_INT);
+            $stmt->bindValue(":id", $mascota->getId(), PDO::PARAM_INT);
+            $stmt->bindValue(":nom", $mascota->getnom(), PDO::PARAM_STR);
+            $stmt->bindValue(":propietari_id", $mascota->getPropietari_id(), PDO::PARAM_INT);
 
             $stmt->execute();
-
             return ($stmt->rowCount() > 0);
 
         } catch (PDOException $e) {
@@ -47,7 +45,7 @@ SQL;
         }
     }
 
-    public function modify($product): bool {
+    public function modify($mascota): bool {
         if ($this->connect == NULL) {
             $_SESSION['error'] = "Unable to connect to database";
             return FALSE;
@@ -55,23 +53,18 @@ SQL;
 
         try {
             $sql = <<<SQL
-                UPDATE product
-                SET name = :name,
-                    price = :price,
-                    description = :description,
-                    category = :category
+                UPDATE mascota
+                SET nom = :nom,
+                    propietari_id = :propietari_id
                 WHERE id = :id;
 SQL;
 
             $stmt = $this->connect->prepare($sql);
-            $stmt->bindValue(":id", $product->getId(), PDO::PARAM_INT);
-            $stmt->bindValue(":name", $product->getName(), PDO::PARAM_STR);
-            $stmt->bindValue(":price", $product->getPrice());
-            $stmt->bindValue(":description", $product->getDescription(), PDO::PARAM_STR);
-            $stmt->bindValue(":category", $product->getCategory(), PDO::PARAM_INT);
+            $stmt->bindValue(":id", $mascota->getId(), PDO::PARAM_INT);
+            $stmt->bindValue(":nom", $mascota->getnom(), PDO::PARAM_STR);
+            $stmt->bindValue(":propietari_id", $mascota->getPropietari_id(), PDO::PARAM_INT);
 
             $stmt->execute();
-
             return ($stmt->rowCount() > 0);
 
         } catch (PDOException $e) {
@@ -86,12 +79,9 @@ SQL;
         }
 
         try {
-            $sql = <<<SQL
-                DELETE FROM product WHERE id = :id;
-SQL;
-
+            $sql = "DELETE FROM mascota WHERE id = :id;";
             $stmt = $this->connect->prepare($sql);
-            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
 
             return ($stmt->rowCount() > 0);
@@ -102,25 +92,19 @@ SQL;
     }
 
     public function listAll(): array {
-        $result = array();
-
         if ($this->connect == NULL) {
             $_SESSION['error'] = "Unable to connect to database";
-            return $result;
+            return [];
         }
 
         try {
-            $sql = <<<SQL
-                SELECT id, name, price, description, category FROM product;
-SQL;
-
+            $sql = "SELECT id, nom, propietari_id FROM mascota;";
             $stmt = $this->connect->query($sql);
-            $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Product');
-
+            $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Mascota');
             return $stmt->fetchAll();
 
         } catch (PDOException $e) {
-            return $result;
+            return [];
         }
     }
 
@@ -132,17 +116,17 @@ SQL;
 
         try {
             $sql = <<<SQL
-                SELECT id, name, price, description, category
-                FROM product
+                SELECT id, nom, propietari_id
+                FROM mascota
                 WHERE id = :id;
 SQL;
 
             $stmt = $this->connect->prepare($sql);
-            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
 
             if ($stmt->rowCount()) {
-                $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Product');
+                $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Mascota');
                 return $stmt->fetch();
             }
 
@@ -150,6 +134,32 @@ SQL;
 
         } catch (PDOException $e) {
             return NULL;
+        }
+    }
+
+
+    public function listByPropietariId($propietari_id): array {
+        if ($this->connect == NULL) {
+            $_SESSION['error'] = "Unable to connect to database";
+            return [];
+        }
+
+        try {
+            $sql = <<<SQL
+                SELECT id, nom, propietari_id
+                FROM mascota
+                WHERE propietari_id = :propietari_id;
+SQL;
+
+            $stmt = $this->connect->prepare($sql);
+            $stmt->bindValue(":propietari_id", $propietari_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Mascota');
+            return $stmt->fetchAll();
+
+        } catch (PDOException $e) {
+            return [];
         }
     }
 }

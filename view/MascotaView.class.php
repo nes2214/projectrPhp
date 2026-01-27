@@ -1,5 +1,5 @@
 <?php
-class ProductView {
+class MascotaView {
     public function __construct() {
 
     }

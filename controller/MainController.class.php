@@ -1,7 +1,7 @@
 <?php
-require_once "controller/CategoryController.class.php";
-require_once "controller/ProductController.class.php";
-
+require_once "controller/PropietariController.class.php";
+require_once "controller/MascotaController.class.php";
+require_once "controller/LineaHistorialController.class.php";
 class MainController {
 
     // carga la vista según la opción
@@ -16,20 +16,22 @@ class MainController {
         }
 
         switch ($request) {
-            // categorías
-            //case "category":
-            case "category":
-                $controlCategory=new CategoryController();
-                $controlCategory->processRequest();
+
+            case "propietari":
+                $controlPropietari=new PropietariController();
+                $controlPropietari->processRequest();
                 break;
-            case "product":
-                // productos
-                $controlProduct=new ProductController();
-                $controlProduct->processRequest();
+            case "mascota":
+                $controlMascota=new MascotaController();
+                $controlMascota->processRequest();
+                break;
+            case "lineaHistorial":
+                $controlLineaHistorial=new LineaHistorialController();
+                $controlLineaHistorial->processRequest();
                 break;
             default:
-                $controlCategory=new CategoryController();
-                $controlCategory->processRequest();
+                $controlPropietari=new PropietariController();
+                $controlPropietari->processRequest();
                 break;
     
         }

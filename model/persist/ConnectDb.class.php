@@ -11,7 +11,7 @@ class ConnectDb {
         $hostname='localhost';
         $username='proven';
         $password='1234';
-        $dbname='categprod';
+        $dbname='projecte';
 
         $conn=NULL;
         

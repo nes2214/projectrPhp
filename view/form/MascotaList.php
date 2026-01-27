@@ -1,20 +1,23 @@
 <div id="content">
     <fieldset>
-        <legend>Category list</legend>    
+        <legend>Mascota list</legend>
         <?php
             if (isset($content)) {
                 echo <<<EOT
                     <table>
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
+                            <th>Nom</th>
+                            <th>Propietari Id</th>
+        
                         </tr>
 EOT;
-                foreach ($content as $category) {
+                foreach ($content as $mascota) {
                     echo <<<EOT
                         <tr>
-                            <td>{$category->getId()}</td>
-                            <td>{$category->getName()}</td>
+                            <td>{$mascota->getId()}</td>
+                            <td>{$mascota->getNom()}</td>
+                            <td>{$mascota->getPropietari_id()}</td>
                         </tr>
 EOT;
                 }
