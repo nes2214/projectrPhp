@@ -4,8 +4,8 @@ require_once "util/MascotaMessage.class.php";
 
 class MascotaFormValidation {
 
-    const ADD_FIELDS    = array('id', 'name', 'propietari_id');
-    const MODIFY_FIELDS = array('id', 'name', 'propietari_id');
+    const ADD_FIELDS    = array('id', 'nom', 'propietari_id');
+    const MODIFY_FIELDS = array('id', 'nom', 'propietari_id');
     const DELETE_FIELDS = array('id');
     const SEARCH_FIELDS = array('id');
 
@@ -14,7 +14,7 @@ class MascotaFormValidation {
 
     public static function checkData($fields) {
         $id = NULL;
-        $name = NULL;
+        $nom = NULL;
         $propietari_id = NULL;
 
         if (!isset($_SESSION)) session_start();
@@ -22,9 +22,9 @@ class MascotaFormValidation {
 
         foreach ($fields as $field) {
             switch ($field) {
-
                 case 'id':
-                    $id = trim(filter_input(INPUT_POST, 'id'));
+                    // El ?? '' evita el error de trim(null)
+                    $id = trim(filter_input(INPUT_POST, 'id') ?? '');
                     if (empty($id)) {
                         $_SESSION['error'][] = MascotaMessage::ERR_FORM['empty_id'];
                     } else if (!preg_match(self::NUMERIC, $id)) {
@@ -32,17 +32,17 @@ class MascotaFormValidation {
                     }
                     break;
 
-                case 'name':
-                    $name = trim(filter_input(INPUT_POST, 'name'));
-                    if (empty($name)) {
-                        $_SESSION['error'][] = MascotaMessage::ERR_FORM['empty_name'];
-                    } else if (!preg_match(self::ALPHANUMERIC, $name)) {
-                        $_SESSION['error'][] = MascotaMessage::ERR_FORM['invalid_name'];
+                case 'nom': // Cambiado de 'name' a 'nom' para coincidir con tu HTML
+                    $nom = trim(filter_input(INPUT_POST, 'nom') ?? '');
+                    if (empty($nom)) {
+                        $_SESSION['error'][] = "El nom no pot estar buit.";
+                    } else if (!preg_match(self::ALPHANUMERIC, $nom)) {
+                        $_SESSION['error'][] = "El nom té caràcters no vàlids.";
                     }
                     break;
 
                 case 'propietari_id':
-                    $propietari_id = trim(filter_input(INPUT_POST, 'propietari_id'));
+                    $propietari_id = trim(filter_input(INPUT_POST, 'propietari_id') ?? '');
                     if (empty($propietari_id)) {
                         $_SESSION['error'][] = MascotaMessage::ERR_FORM['empty_propietari'];
                     } else if (!preg_match(self::NUMERIC, $propietari_id)) {
@@ -52,7 +52,8 @@ class MascotaFormValidation {
             }
         }
 
-        $mascota = new Mascota($id, $name);
+        // Creamos el objeto para devolverlo a la vista
+        $mascota = new Mascota($id, $nom);
         $mascota->setPropietari_id($propietari_id);
 
         return $mascota;

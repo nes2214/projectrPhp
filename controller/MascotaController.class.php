@@ -32,9 +32,6 @@ class MascotaController implements ControllerInterface {
         case "form_search":
             $this->formCercarMascota();
             break;
-        case "form_cercar_mascota":  
-            $this->formCercarMascota();
-            break;
         case "cercar_mascota":  
             $this->cercarMascota();
             break;
@@ -43,6 +40,12 @@ class MascotaController implements ControllerInterface {
             break;
         case "buscar_mascotes":  
             $this->listByPropietari();
+            break;
+        case "form_modify":
+                $this->formModify();
+                break;
+        case "modify":
+            $this->modify();
             break;
         default:
             $this->view->display();
@@ -100,7 +103,7 @@ class MascotaController implements ControllerInterface {
             }
         }
 
-        $this->view->display("view/form/MascotaFormSModDel.php", $mascotaValid);
+        $this->view->display("view/form/editMascota.php", $mascotaValid);
     }
 
     public function delete() {
@@ -124,7 +127,7 @@ class MascotaController implements ControllerInterface {
             }
         }
 
-        $this->view->display("view/form/MascotaFormSModDel.php", $mascotaValid);
+        $this->view->display("view/form/editMascota.php", $mascotaValid);
     }
 
     public function listAll() {
@@ -155,7 +158,7 @@ class MascotaController implements ControllerInterface {
             }
         }
 
-        $this->view->display("view/form/MascotaFormSModDel.php", $mascotaValid);
+        $this->view->display("view/form/editMascota.php", $mascotaValid);
     }
 
     /**
@@ -233,6 +236,26 @@ public function cercarMascota() {
     }
 
     public function formSModDel() {
-        $this->view->display("view/form/MascotaFormSModDel.php");
+        $this->view->display("view/form/editMascota.php");
     }
+
+    public function formModify() {
+    // Ahora sí usamos INPUT_POST
+    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+    if ($id) {
+        $mascota = $this->model->searchById($id);
+        
+        if ($mascota) {
+            // Pasamos el objeto a la vista del formulario
+            $this->view->display("view/form/editMascota.php", $mascota);
+        } else {
+            $_SESSION['error'][] = "No s'ha trobat la mascota.";
+            $this->listAll();
+        }
+    } else {
+        $_SESSION['error'][] = "Error: No s'ha rebut un ID vàlid per POST.";
+        $this->listAll();
+    }
+}
 }

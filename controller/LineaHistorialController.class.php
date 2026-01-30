@@ -33,6 +33,7 @@ class LineaHistorialController implements ControllerInterface {
             case "add":
                 $this->add();
                 break;
+            
         }
     }
 
@@ -41,21 +42,36 @@ class LineaHistorialController implements ControllerInterface {
     }
 
     public function add() {
-        $lineaHistorialValid = LineaHistorialFormValidation::checkData(
-            LineaHistorialFormValidation::ADD_FIELDS
-        );
-
-        if (empty($_SESSION['error'])) {
-            $result = $this->model->addLineaHistorial($lineaHistorialValid);
-            if ($result) {
-                $_SESSION['success'][] = LineaHistorialMessage::SUCCESS['add'];
-            } else {
-                $_SESSION['error'][] = LineaHistorialMessage::ERROR['add'];
-            }
-        }
-
-        $this->view->display();
+    // Llamar a la validación
+    
+    $lineaHistorialValid = LineaHistorialFormValidation::checkData(
+        LineaHistorialFormValidation::ADD_FIELDS
+    );
+    if (is_null($lineaHistorialValid)) {
+        
+        $this->view->display("view/form/LineaHistorialFormAdd.php", null);
+        return; // Salir del método
     }
+
+    if (empty($_SESSION['error'])) {
+        $lineaHistorial = $this->model->searchById($lineaHistorialValid->getId());
+
+        if (is_null($lineaHistorial)) {
+            $result = $this->model->add($lineaHistorialValid);
+
+            if ($result === TRUE) {
+                $_SESSION['info'][] = LineaHistorialMessage::INF_FORM['insert'];
+                $lineaHistorialValid = null;
+            } else {
+                $_SESSION['error'][] = LineaHistorialMessage::ERR_DAO['insert'];
+            }
+        } else {
+            $_SESSION['error'][] = LineaHistorialMessage::ERR_FORM['exists_id'];
+        }
+    }
+
+    $this->view->display("view/form/LineaHistorialFormAdd.php", $lineaHistorialValid);
+}
     public function listAll() {
         $lineasHistorial = $this->model->listAll();
         $this->view->display("view/lineaHistorial/listLineaHistorial.php", $lineasHistorial);
@@ -79,5 +95,7 @@ class LineaHistorialController implements ControllerInterface {
     }
     public function searchById() {
     }  
+
+    
     
 }
