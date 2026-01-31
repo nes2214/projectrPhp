@@ -1,15 +1,25 @@
 <?php
-    session_start();
+// Destruir cualquier sesión anterior
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_destroy();
+}
 
-    $host = $_SERVER['HTTP_HOST']; // localhost
-    $path = rtrim(dirname($_SERVER['PHP_SELF']), "/"); 
-    $base = "http://" . $host . $path . "/";
-    
-    define("PATH_CSS", $base . "view/css/");
-    define("PATH_IMG", $base . "view/img/");
-    define("PATH_JS", $base . "view/js/");
-    
-    require_once "controller/MainController.class.php";
+session_start();
+
+// Forzar inicialización limpia
+$_SESSION = array(); // Limpiar todo
+$_SESSION['error'] = [];
+$_SESSION['info'] = [];
+
+$host = $_SERVER['HTTP_HOST'];
+$path = rtrim(dirname($_SERVER['PHP_SELF']), "/"); 
+$base = "http://" . $host . $path . "/";
+
+define("PATH_CSS", $base . "view/css/");
+define("PATH_IMG", $base . "view/img/");
+define("PATH_JS", $base . "view/js/");
+
+require_once "controller/MainController.class.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -9,8 +9,8 @@ class ConnectDb {
     //TODO - canvieu host,BD, usuari, password
     public function getConnection() {
         $hostname='localhost';
-        $username='proven';
-        $password='1234';
+        $username='vet_user';
+        $password='vet_password';
         $dbname='projecte';
 
         $conn=NULL;

@@ -2,12 +2,12 @@
     <div class="w-full max-w-md overflow-hidden rounded-xl border border-gray-800 shadow-2xl bg-gray-200">
 
         <div class="bg-gray-800 p-4">
-            <h2 class="text-xl font-bold text-gray-300 text-center uppercase tracking-wider">Gestió de Propietaris</h2>
+            <h2 class="text-xl font-bold text-gray-300 text-center uppercase tracking-wider">Afegir Línia Historial</h2>
         </div>
 
-        <form method="post" action="" id="propietariForm" class="p-6 text-black">
+        <form method="post" action="index.php?menu=lineaHistorial" id="historialForm" class="p-6 text-black">
             <fieldset class="space-y-4">
-                <legend class="sr-only">Add category</legend>
+                <legend class="sr-only">Formulari d'Historial</legend>
 
                 <div>
                     <label class="block text-sm font-bold mb-1">Id *:</label>
@@ -18,37 +18,43 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-1">Nom *:</label>
-                    <input type="text" placeholder="Name" name="nom"
-                        class="w-full border border-gray-400 p-2 rounded bg-gray-300 cursor-not-allowed focus:outline-none"
-                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getNom()); } ?>" readonly />
+                    <label class="block text-sm font-bold mb-1">Data *:</label>
+                    <input type="date" name="data" id="data"
+                        class="w-full border border-gray-400 p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getData()); } ?>" />
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-1">Email *:</label>
-                    <input type="text" placeholder="Email" name="email"
+                    <label class="block text-sm font-bold mb-1">Motiu Visita *:</label>
+                    <input type="text" placeholder="Ex: Vacunació" name="motiu_visita" id="motiu_visita"
                         class="w-full border border-gray-400 p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getEmail()); } ?>" />
+                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getMotiuVisita()); } ?>" />
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-1">Movil *:</label>
-                    <input type="text" placeholder="Mobile" name="mobil"
+                    <label class="block text-sm font-bold mb-1">Descripció *:</label>
+                    <textarea name="descripcio" id="descripcio" rows="3" placeholder="Detalls de la visita..."
+                        class="w-full border border-gray-400 p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"><?php if (isset($content)) { echo htmlspecialchars($content->getDescripcio()); } ?></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-1">ID Mascota *:</label>
+                    <input type="text" placeholder="ID de la mascota" name="mascota_id" id="mascota_id"
                         class="w-full border border-gray-400 p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getMobil()); } ?>" />
+                        value="<?php if (isset($content)) { echo htmlspecialchars($content->getMascotaId()); } ?>" />
                 </div>
 
                 <p class="text-xs text-gray-600 font-semibold">* Required fields</p>
 
                 <div class="grid grid-cols-3 gap-2 mt-6">
-                    <button type="submit" name="action" value="search"
-                        class="bg-gray-800 text-white p-2 rounded hover:bg-gray-700 transition font-bold uppercase text-xs">Search</button>
+                    <button type="submit" name="action" value="add"
+                        class="bg-gray-800 text-white p-2 rounded hover:bg-gray-700 transition font-bold uppercase text-xs cursor-pointer">Add</button>
 
                     <button type="submit" name="action" value="modify"
-                        class="bg-gray-800 text-white p-2 rounded hover:bg-gray-700 transition font-bold uppercase text-xs">Modify</button>
+                        class="bg-gray-800 text-white p-2 rounded hover:bg-gray-700 transition font-bold uppercase text-xs cursor-pointer">Modify</button>
 
-                    <button type="button" name="reset" value="reset" onClick="form_reset(this.form.id);"
-                        class="border border-gray-800 text-gray-800 p-2 rounded hover:bg-gray-800 hover:text-white transition font-bold uppercase text-xs">Reset</button>
+                    <button type="button" onClick="document.getElementById('historialForm').reset();"
+                        class="border border-gray-800 text-gray-800 p-2 rounded hover:bg-gray-800 hover:text-white transition font-bold uppercase text-xs cursor-pointer">Reset</button>
                 </div>
             </fieldset>
         </form>

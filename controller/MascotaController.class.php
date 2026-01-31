@@ -14,49 +14,75 @@ class MascotaController implements ControllerInterface {
     public function __construct() {
         $this->view = new MascotaView();
         $this->model = new MascotaModel();
+        $this->initSessionArrays();
     }
 
-   public function processRequest() {
-    if (filter_has_var(INPUT_POST, 'action')) {
-        $request = filter_input(INPUT_POST, 'action');
-    } else {
-        $request = filter_has_var(INPUT_GET, 'option') 
-            ? filter_input(INPUT_GET, 'option') 
-            : NULL;
+    /**
+     * Inicializa los arrays de sesión para mensajes
+     */
+    private function initSessionArrays() {
+        if (!isset($_SESSION['error'])) {
+            $_SESSION['error'] = [];
+        }
+        if (!isset($_SESSION['info'])) {
+            $_SESSION['info'] = [];
+        }
+        
+        // Forzar que sean arrays
+        if (!is_array($_SESSION['error'])) {
+            $_SESSION['error'] = [];
+        }
+        if (!is_array($_SESSION['info'])) {
+            $_SESSION['info'] = [];
+        }
     }
 
-    switch ($request) {
-        case "list_all":
-            $this->listAll();
-            break;
-        case "form_search":
-            $this->formCercarMascota();
-            break;
-        case "cercar_mascota":  
-            $this->cercarMascota();
-            break;
-        case "form_buscar_mascotes":  
-            $this->formBuscarMascotes();
-            break;
-        case "buscar_mascotes":  
-            $this->listByPropietari();
-            break;
-        case "form_modify":
+    public function processRequest() {
+        // Asegurar que los arrays estén inicializados en cada request
+        $this->initSessionArrays();
+        
+        if (filter_has_var(INPUT_POST, 'action')) {
+            $request = filter_input(INPUT_POST, 'action');
+        } else {
+            $request = filter_has_var(INPUT_GET, 'option') 
+                ? filter_input(INPUT_GET, 'option') 
+                : NULL;
+        }
+
+        switch ($request) {
+            case "list_all":
+                $this->listAll();
+                break;
+            case "form_search":
+                $this->formCercarMascota();
+                break;
+            case "cercar_mascota":  
+                $this->cercarMascota();
+                break;
+            case "form_buscar_mascotes":  
+                $this->formBuscarMascotes();
+                break;
+            case "buscar_mascotes":  
+                $this->listByPropietari();
+                break;
+            case "form_modify":
                 $this->formModify();
                 break;
-        case "modify":
-            $this->modify();
-            break;
-        default:
-            $this->view->display();
+            case "modify":
+                $this->modify();
+                break;
+            default:
+                $this->view->display();
+        }
     }
-}
 
     /* =========================
        MÉTODOS CRUD
     ========================== */
 
     public function add() {
+        $this->initSessionArrays();
+        
         $mascotaValid = MascotaFormValidation::checkData(
             MascotaFormValidation::ADD_FIELDS
         );
@@ -83,6 +109,8 @@ class MascotaController implements ControllerInterface {
     }
 
     public function modify() {
+        $this->initSessionArrays();
+        
         $mascotaValid = MascotaFormValidation::checkData(
             MascotaFormValidation::MODIFY_FIELDS
         );
@@ -107,6 +135,8 @@ class MascotaController implements ControllerInterface {
     }
 
     public function delete() {
+        $this->initSessionArrays();
+        
         $mascotaValid = MascotaFormValidation::checkData(
             MascotaFormValidation::DELETE_FIELDS
         );
@@ -131,6 +161,8 @@ class MascotaController implements ControllerInterface {
     }
 
     public function listAll() {
+        $this->initSessionArrays();
+        
         $mascotas = $this->model->listAll();
 
         if (!empty($mascotas)) {
@@ -143,6 +175,8 @@ class MascotaController implements ControllerInterface {
     }
 
     public function searchById() {
+        $this->initSessionArrays();
+        
         $mascotaValid = MascotaFormValidation::checkData(
             MascotaFormValidation::SEARCH_FIELDS
         );
@@ -162,100 +196,111 @@ class MascotaController implements ControllerInterface {
     }
 
     /**
- * Mostrar formulario de búsqueda de mascotas por propietario
- */
-public function formBuscarMascotes() {
-    $this->view->display("view/form/buscarMascotaForm.php");
-}
-
-/**
- * Buscar y listar mascotas por propietario
- */
-public function listByPropietari() {
-    $propietariId = filter_has_var(INPUT_GET, 'propietari_id')
-        ? filter_input(INPUT_GET, 'propietari_id', FILTER_VALIDATE_INT)
-        : NULL;
-
-    if ($propietariId === NULL || $propietariId === FALSE) {
-        $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+     * Mostrar formulario de búsqueda de mascotas por propietario
+     */
+    public function formBuscarMascotes() {
+        $this->initSessionArrays();
         $this->view->display("view/form/buscarMascotaForm.php");
-        return;
     }
 
-    $mascotes = $this->model->listByPropietariId($propietariId);
+    /**
+     * Buscar y listar mascotas por propietario
+     */
+    public function listByPropietari() {
+        $this->initSessionArrays();
+        
+        $propietariId = filter_has_var(INPUT_GET, 'propietari_id')
+            ? filter_input(INPUT_GET, 'propietari_id', FILTER_VALIDATE_INT)
+            : NULL;
 
-    if (!empty($mascotes)) {
-        $_SESSION['info'][] = MascotaMessage::INF_FORM['found'];
-    } else {
-        $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+        if ($propietariId === NULL || $propietariId === FALSE) {
+            $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+            $this->view->display("view/form/buscarMascotaForm.php");
+            return;
+        }
+
+        $mascotes = $this->model->listByPropietariId($propietariId);
+
+        if (!empty($mascotes)) {
+            $_SESSION['info'][] = MascotaMessage::INF_FORM['found'];
+        } else {
+            $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+        }
+
+        $this->view->display("view/form/buscarMascota.php", $mascotes);
     }
 
-    $this->view->display("view/form/buscarMascota.php", $mascotes);
-}
-
-/**
- * Mostrar formulario de búsqueda de mascota por ID
- */
-public function formCercarMascota() {
-    $this->view->display("view/form/cercarMascotaForm.php");
-}
-
-/**
- * Buscar mascota por ID
- */
-public function cercarMascota() {
-    $mascotaId = filter_has_var(INPUT_GET, 'mascota_id')
-        ? filter_input(INPUT_GET, 'mascota_id', FILTER_VALIDATE_INT)
-        : NULL;
-
-    if ($mascotaId === NULL || $mascotaId === FALSE) {
-        $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+    /**
+     * Mostrar formulario de búsqueda de mascota por ID
+     */
+    public function formCercarMascota() {
+        $this->initSessionArrays();
         $this->view->display("view/form/cercarMascotaForm.php");
-        return;
     }
 
-    $mascota = $this->model->searchById($mascotaId);
+    /**
+     * Buscar mascota por ID
+     */
+    public function cercarMascota() {
+        $this->initSessionArrays();
+        
+        $mascotaId = filter_has_var(INPUT_GET, 'mascota_id')
+            ? filter_input(INPUT_GET, 'mascota_id', FILTER_VALIDATE_INT)
+            : NULL;
 
-    if (!is_null($mascota)) {
-        $_SESSION['info'][] = MascotaMessage::INF_FORM['found'];
-        // Convertir a array para mantener consistencia con otras vistas
-        $mascotes = [$mascota];
-    } else {
-        $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
-        $mascotes = [];
+        if ($mascotaId === NULL || $mascotaId === FALSE) {
+            $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+            $this->view->display("view/form/cercarMascotaForm.php");
+            return;
+        }
+
+        $mascota = $this->model->searchById($mascotaId);
+
+        if (!is_null($mascota)) {
+            $_SESSION['info'][] = MascotaMessage::INF_FORM['found'];
+            // Convertir a array para mantener consistencia con otras vistas
+            $mascotes = [$mascota];
+        } else {
+            $_SESSION['error'][] = MascotaMessage::ERR_FORM['not_found'];
+            $mascotes = [];
+        }
+
+        $this->view->display("view/form/buscarMascota.php", $mascotes);
     }
-
-    $this->view->display("view/form/buscarMascota.php", $mascotes);
-}
+    
     /* =========================
        FORMULARIOS
     ========================== */
 
     public function formAdd() {
+        $this->initSessionArrays();
         $this->view->display("view/form/MascotaFormAdd.php");
     }
 
     public function formSModDel() {
+        $this->initSessionArrays();
         $this->view->display("view/form/editMascota.php");
     }
 
     public function formModify() {
-    // Ahora sí usamos INPUT_POST
-    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-
-    if ($id) {
-        $mascota = $this->model->searchById($id);
+        $this->initSessionArrays();
         
-        if ($mascota) {
-            // Pasamos el objeto a la vista del formulario
-            $this->view->display("view/form/editMascota.php", $mascota);
+        // Ahora sí usamos INPUT_POST
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+        if ($id) {
+            $mascota = $this->model->searchById($id);
+            
+            if ($mascota) {
+                // Pasamos el objeto a la vista del formulario
+                $this->view->display("view/form/editMascota.php", $mascota);
+            } else {
+                $_SESSION['error'][] = "No s'ha trobat la mascota.";
+                $this->listAll();
+            }
         } else {
-            $_SESSION['error'][] = "No s'ha trobat la mascota.";
+            $_SESSION['error'][] = "Error: No s'ha rebut un ID vàlid per POST.";
             $this->listAll();
         }
-    } else {
-        $_SESSION['error'][] = "Error: No s'ha rebut un ID vàlid per POST.";
-        $this->listAll();
     }
-}
 }

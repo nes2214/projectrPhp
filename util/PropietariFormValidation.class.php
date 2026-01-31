@@ -7,8 +7,8 @@ class PropietariFormValidation {
     const DELETE_FIELDS = array('id');
     const SEARCH_FIELDS = array('id');
     
-    const NUMERIC = "/^[0-9]+$/";  // ✅ Solo números (sin negación)
-    const ALPHABETIC = "/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/";  // ✅ Solo letras y espacios (sin negación)
+    const NUMERIC = "/^[0-9]+$/";
+    const ALPHABETIC = "/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/";  
     const MOBILE_PATTERN = "/^[0-9]{9}$/";
     
     public static function checkData($fields) {
@@ -26,7 +26,7 @@ class PropietariFormValidation {
                     if (empty($id)) {
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['empty_id']);
                     }
-                    else if (!preg_match(self::NUMERIC, $id)) {  // ✅ Lógica directa
+                    else if (!preg_match(self::NUMERIC, $id)) {  
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['invalid_id']);
                     }
                     break;
@@ -38,7 +38,7 @@ class PropietariFormValidation {
                     if (empty($nom)) {
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['empty_nom']);
                     }
-                    else if (!preg_match(self::ALPHABETIC, $nom)) {  // ✅ Lógica directa
+                    else if (!preg_match(self::ALPHABETIC, $nom)) {  
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['invalid_nom']);
                     }
                     break;
@@ -50,7 +50,7 @@ class PropietariFormValidation {
                     if (empty($email)) {
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['empty_email']);
                     }
-                    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {  // ✅ Ya estaba bien
+                    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { 
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['invalid_email']);
                     }
                     break;
@@ -62,7 +62,7 @@ class PropietariFormValidation {
                     if (empty($mobil)) {
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['empty_mobil']);
                     }
-                    else if (!preg_match(self::MOBILE_PATTERN, $mobil)) {  // ✅ Lógica directa
+                    else if (!preg_match(self::MOBILE_PATTERN, $mobil)) {  
                         array_push($_SESSION['error'], PropietariMessage::ERR_FORM['invalid_mobil']);
                     }
                     break;

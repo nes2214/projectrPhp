@@ -13,7 +13,8 @@
                     <label class="block text-sm font-bold mb-1" for="id">Id *:</label>
                     <input type="text" name="id" id="id" placeholder="ID de la línia"
                         class="w-full border border-gray-400 p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-                        value="<?= (isset($content)) ? htmlspecialchars($content->getId()) : '' ?>" required />
+                        value="<?= (isset($content->id)) ? htmlspecialchars($content->id) : (isset($content) && method_exists($content, 'getId') ? htmlspecialchars($content->getId()) : '') ?>"
+                        required />
                 </div>
 
                 <div>

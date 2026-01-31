@@ -1,25 +1,60 @@
-<nav class="bg-black flex ">
-    <ul>
-        <li>
-            <a href="index.php">Home</a>
+<nav class="bg-black">
+    <ul class="flex">
+        <li class="relative group">
+            <a href="index.php" class="block px-6 py-4 text-white hover:bg-gray-800 transition-colors duration-200">
+                Home
+            </a>
         </li>
 
-        <li>
-            <a href="#">Propietaris</a>
-            <ul class="hidden">
-                <li><a href="index.php?menu=mascota&option=form_buscar_mascotes">Buscar mascotes</a></li>
-                <li><a href="index.php?menu=propietari&option=form_smoddel">Modify</a></li>
-                <li><a href="index.php?menu=propietari&option=list_all">List all</a></li>
+        <li class="relative group">
+            <a href="#" class="block px-6 py-4 text-white hover:bg-gray-800 transition-colors duration-200">
+                Propietaris
+            </a>
+            <ul class="absolute left-0 top-full hidden group-hover:block bg-gray-900 min-w-[200px] shadow-lg z-10">
+                <li>
+                    <a href="index.php?menu=mascota&option=form_buscar_mascotes" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        Buscar mascotes
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?menu=propietari&option=form_smoddel" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        Modify
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?menu=propietari&option=list_all" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        List all
+                    </a>
+                </li>
             </ul>
         </li>
 
-        <li>
-            <a href="#">Mascotes</a>
-            <ul class="hidden">
-                <li><a href="index.php?menu=mascota&option=form_search">Buscar</a></li>
-                <li><a href="index.php?menu=mascota&option=list_all">List Mascotes</a></li>
-                <li><a href="index.php?menu=lineaHistorial&option=form_add">Afegir una LineaHistorial</a></li>
-
+        <li class="relative group">
+            <a href="#" class="block px-6 py-4 text-white hover:bg-gray-800 transition-colors duration-200">
+                Mascotes
+            </a>
+            <ul class="absolute left-0 top-full hidden group-hover:block bg-gray-900 min-w-[200px] shadow-lg z-10">
+                <li>
+                    <a href="index.php?menu=mascota&option=form_search" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        Buscar
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?menu=mascota&option=list_all" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        List Mascotes
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?menu=lineaHistorial&option=form_add" 
+                       class="block px-6 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
+                        Afegir una LineaHistorial
+                    </a>
+                </li>
             </ul>
         </li>
     </ul>

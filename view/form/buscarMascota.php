@@ -1,6 +1,6 @@
 <div class="flex flex-col justify-center items-center w-full min-h-[200px]">
 
-    <h2 class="text-2xl font-bold mb-6 text-black text-center">Llistat de Mascotes</h2>
+    <h2 class="text-2xl font-bold mb-6 text-white text-center">Llistat de Mascotes</h2>
 
     <?php if (empty($content)) : ?>
     <p class="text-gray-400">No s'han trobat mascotes.</p>
@@ -16,7 +16,8 @@
             </thead>
             <tbody class="text-gray-300">
                 <?php foreach ($content as $mascota): ?>
-                <tr class="hover:bg-gray-200 text-black transition-colors border-b border-gray-800 last:border-0">
+                <tr
+                    class="hover:bg-gray-300 text-black transition-colors border-b  bg-gray-200 border-gray-800 last:border-0">
                     <td class="p-4"><?= htmlspecialchars($mascota->getId()) ?></td>
                     <td class="p-4"><?= htmlspecialchars($mascota->getNom()) ?></td>
                     <td class="p-4 text-center"><?= htmlspecialchars($mascota->getPropietari_id()) ?></td>
